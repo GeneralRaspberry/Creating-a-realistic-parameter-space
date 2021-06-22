@@ -274,23 +274,23 @@ theta_an<-paste("theta ==", theta)
 temptimemax<-temp%>%filter(infected<999)%>%filter(time==max(time))
 temptimemax<-temptimemax[,"time"]
 pred_data <- data.frame(time=times, infected=logis(r=mean_r, t=times, K=1000, q0=1))
-ggplot(temp) + geom_line(aes(x=time, y=infected/hosts, group=sim), size=.2) +
+ggplot(temp) + geom_line(aes(x=time, y=infected/hosts, group=sim), size=.2,colour="gray70") +
   geom_line(data=filter(pred_data, infected<1000), aes(x=time, y=infected/hosts), colour="red", size=1)+
   ggtitle("Epidemic growth curve for 1000 simulations")+theme_tufte()+xlim(0,150) +
   annotate(geom="text",label=sprintf("%d days until .25 prevalence", days),x=100,y=.1) + 
   annotate(parse=T, geom="text",label=beta_an, x = 100, y = .2) +
   annotate(parse=T, geom="text", label=theta_an, x= 100, y = .3) +
   ylab("Prevalence") +
-  xlab("Time")
+  xlab("Time") 
 
-ggprev<-ggplot(temp) + geom_line(aes(x=time, y=infected/hosts, group=sim), size=.2) +
+ggprev<-ggplot(temp) + geom_line(aes(x=time, y=infected/hosts, group=sim), size=.2,colour="gray70") +
   geom_line(data=filter(pred_data, infected<1000), aes(x=time, y=infected/hosts), colour="red", size=1)+
   ggtitle("Epidemic growth curve for 1000 simulations")+theme_tufte()+xlim(0,150) +
   annotate(geom="text",label=sprintf("%d days until .25 prevalence", days),x=100,y=.1) + 
   annotate(parse=T, geom="text",label=beta_an, x = 100, y = .2) +
   annotate(parse=T, geom="text", label=theta_an, x= 100, y = .3) +
   ylab("Prevalence") +
-  xlab("Time")
+  xlab("Time") 
 proc.end2<-proc.time()-t2
 ################################saving the data if it looks good!###########################################
 prevfile<-paste0("ggprev",beta,"theta",theta,"delta.t",delta.t,"rf",randmod,".png")
