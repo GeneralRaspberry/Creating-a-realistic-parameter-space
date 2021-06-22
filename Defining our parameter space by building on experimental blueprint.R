@@ -7,6 +7,7 @@ library("dplyr")
 library("ggplot2")
 library("ggthemes")
 library("RColorBrewer")
+library("beepr")
 ## tau-leap Gillespie algorithm function
 tauLeapG <- function(beta, # transmission rate
                      theta, # dispersal scale
@@ -81,7 +82,7 @@ tauLeapG <- function(beta, # transmission rate
 
 
 ## meta parameters
-delta.t <- 20 # time step (ALEX-THIS IS BIGGER THAN THE EXPERIMENT BELOW BECAUSE IT IS TAKING SO MUCH LONGER!)
+delta.t <- 5 # time step (ALEX-THIS IS BIGGER THAN THE EXPERIMENT BELOW BECAUSE IT IS TAKING SO MUCH LONGER!)
 iterations <- 1000 # how many epidemic to simulate
 hosts <- 1000 # number of hosts
 dim <- 1000 # dimension of the landscape
@@ -89,8 +90,8 @@ dim <- 1000 # dimension of the landscape
 ## epidemic parameters
 sigma <- 0 #this is the assymptomatic period, doesn't change yet
 
-beta <- 1 ##The data I sent you, which is called data in R is the 1000 realisations of these parameters
-theta <- 50
+beta <- 100 ##The data I sent you, which is called data in R is the 1000 realisations of these parameters
+theta <- 100
 b <- 1
 area.host<-1
 
@@ -205,7 +206,8 @@ data <- do.call("rbind", par_results)
 
 ##################################add a timer############################################################
 proc.end<-proc.time()-ts
-
+proc.end
+beep()
 ###################################plot your data###########################################################
 t2<- proc.time()
 
@@ -245,7 +247,7 @@ eval <- function(r, df){
 # sapply(unique(temp$sim), 
 #               function(i) optimize(f = eval, interval = c(0, 0.5), df=filter(temp, sim==i))$minimum)
 r <- sapply(unique(temp), 
-             function(i) optimize(f = eval, interval = c(0, .1), df=filter(temp, sim==i))$minimum)
+             function(i) optimize(f = eval, interval = c(0, 5), df=filter(temp, sim==i))$minimum)
 }
 #another cluster
 cl <- makeCluster(mc <- getOption("cl.cores", 3))
@@ -292,6 +294,8 @@ ggprev<-ggplot(temp) + geom_line(aes(x=time, y=infected/hosts, group=sim), size=
   ylab("Prevalence") +
   xlab("Time") 
 proc.end2<-proc.time()-t2
+proc.end2
+beep()
 ################################saving the data if it looks good!###########################################
 prevfile<-paste0("ggprev",beta,"theta",theta,"delta.t",delta.t,"rf",randmod,".png")
 ggsave(file=prevfile,ggprev)
