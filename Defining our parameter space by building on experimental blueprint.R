@@ -90,8 +90,8 @@ dim <- 1000 # dimension of the landscape
 ## epidemic parameters
 sigma <- 0 #this is the assymptomatic period, doesn't change yet
 
-beta <- 100 ##The data I sent you, which is called data in R is the 1000 realisations of these parameters
-theta <- 100
+beta <- 25 ##The data I sent you, which is called data in R is the 1000 realisations of these parameters
+theta <- 50
 b <- 1
 area.host<-1
 
@@ -299,13 +299,15 @@ beep()
 ################################saving the data if it looks good!###########################################
 prevfile<-paste0("ggprev",beta,"theta",theta,"delta.t",delta.t,"rf",randmod,".png")
 ggsave(file=prevfile,ggprev)
-datanamefile<-paste0("Theta", theta, " Beta", beta, " Rf", randmod, " Delta t", delta.t,".Rda")
+wdspec1<-"C:/Users/owner/Documents/Uni stuff/PhD/R scripts/Chapter 1/Script for identifying parameter space/Raw Data/"
+datanamefile<-paste0(wdspec1,"Theta", theta, " Beta", beta, " Rf", randmod, " Delta t", delta.t,".Rda")
 save(data,file=datanamefile)
   
 length(unique(unlist(par_r)))
 mean_r
+wdspec<-"C:/Users/owner/Documents/Uni stuff/PhD/R scripts/Chapter 1/Script for identifying parameter space/Raw Data/Growth rate table corresponding to raw data/"
 parameter_table<-data.frame("Growth Rate"=mean_r, "Mean Dispersal Distance"= theta*2, "\u03b2" = beta, "Plant Distribution" = randmod, "\u03C4 leap"=delta.t)
-parametertablenamefile<-paste0( "Growth Rate ",mean_r, "Mean Dispersal Distance ", theta*2,"\u03b2 ",beta, "Plant Distribution " , randmod, "\u03C4-leap ", delta.t, ".Rda")
+parametertablenamefile<-paste0(wdspec, "Growth Rate ",mean_r, "Mean Dispersal Distance ", theta*2,"\u03b2 ",beta, "Plant Distribution " , randmod, "\u03C4-leap ", delta.t, ".Rda")
 save(parameter_table,file=parametertablenamefile)
 
 ##################################Given the already calculated timestest we can now add saved file##########
