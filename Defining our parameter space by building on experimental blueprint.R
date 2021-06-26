@@ -247,7 +247,7 @@ eval <- function(r, df){
 # sapply(unique(temp$sim), 
 #               function(i) optimize(f = eval, interval = c(0, 0.5), df=filter(temp, sim==i))$minimum)
 r <- sapply(unique(temp), 
-             function(i) optimize(f = eval, interval = c(0, 5), df=filter(temp, sim==i))$minimum)
+             function(i) optimize(f = eval, interval = c(0, 1), df=filter(temp, sim==i))$minimum)
 }
 #another cluster
 cl <- makeCluster(mc <- getOption("cl.cores", 3))
@@ -300,10 +300,13 @@ beep()
 prevfile<-paste0("ggprev",beta,"theta",theta,"delta.t",delta.t,"rf",randmod,".png")
 ggsave(file=prevfile,ggprev)
 datanamefile<-paste0("Theta", theta, " Beta", beta, " Rf", randmod, " Delta t", delta.t,".Rda")
-data%>%save(file=datanamefile)
+save(data,file=datanamefile)
   
 length(unique(unlist(par_r)))
 mean_r
+parameter_table<-data.frame("Growth Rate"=mean_r, "Mean Dispersal Distance"= theta*2, "\u03b2" = beta, "Plant Distribution" = randmod, "\u03C4 leap"=delta.t)
+parametertablenamefile<-paste0( "Growth Rate ",mean_r, "Mean Dispersal Distance ", theta*2,"\u03b2 ",beta, "Plant Distribution " , randmod, "\u03C4-leap ", delta.t, ".Rda")
+save(parameter_table,file=parametertablenamefile)
 
 ##################################Given the already calculated timestest we can now add saved file##########
 #See timestamp value file for more information
