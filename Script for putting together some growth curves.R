@@ -1,15 +1,13 @@
 rm(list=ls())
 ########################################Collating the data for a growth rate table################################
+h<-parameter_table
+growthtable<-data.frame(a)
 
-
-###########################Using a function to load objects needed with unique names##############################
-setwd("C:\Users\owner\Documents\Uni stuff\PhD\R scripts\
-Chapter 1\Script for identifying parameter space\Raw Data\
-      Growth rate table corresponding to raw data")
-
-loadRData <- function(fileName){
-  #loads an RData file, and returns it
-  load(fileName)
-  get(ls()[ls() != "fileName"])
+n<-2
+for(i in 2:8){
+ # growthtable<-rbind(i,growthtable)
+  growthtable<-rbind(chartr("12345678","abcdefgh",n),growthtable)
+  n<-n+1
 }
-###########################################Not going to work with the weird save file names#######################
+
+###################################this doesnt work because it just binds the letters#############################
