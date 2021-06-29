@@ -82,7 +82,7 @@ tauLeapG <- function(beta, # transmission rate
 
 
 ## meta parameters
-delta.t <- 5 # time step (ALEX-THIS IS BIGGER THAN THE EXPERIMENT BELOW BECAUSE IT IS TAKING SO MUCH LONGER!)
+delta.t <- 50 # time step (ALEX-THIS IS BIGGER THAN THE EXPERIMENT BELOW BECAUSE IT IS TAKING SO MUCH LONGER!)
 iterations <- 1000 # how many epidemic to simulate
 hosts <- 1000 # number of hosts
 dim <- 1000 # dimension of the landscape
@@ -102,6 +102,7 @@ ts<-proc.time()
 ###########################################################################################################
 ##Concatenating a list of metric values
 ##-----------------------------------------
+sim_par <- function(i=NULL){
 
 
   set.seed(seed=NULL)
@@ -172,11 +173,10 @@ ts<-proc.time()
   
   data <- data.frame(x=landscape$x, y=landscape$y, id=1:hosts)
 ## design a function that will be called
-sim_par <- function(i=NULL){
   
   
   set.seed(seed=NULL)
-  marks(landscape)<- sample(c(TRUE, rep(FALSE, n-1)))
+  marks(landscape)<- sample(c(TRUE, rep(FALSE, hosts-1)))
   
   output <- tauLeapG(beta = beta, theta = theta, b = b,
                      sigma = sigma, delta.t = delta.t,
@@ -310,14 +310,12 @@ parameter_table<-data.frame("Growth Rate"=mean_r, "Mean Dispersal Distance"= the
 parametertablenamefile<-paste0(wdspec, "Growth Rate ",mean_r, "Mean Dispersal Distance ", theta*2,"\u03b2 ",beta, "Plant Distribution " , randmod, "\u03C4-leap ", delta.t, ".Rda")
 save(parameter_table,file=parametertablenamefile)
 
-##################################Given the already calculated timestest we can now add saved file##########
-#See timestamp value file for more information
-load("C:/Users/owner/Documents/Uni stuff/PhD/R scripts/Chapter 1/Script for identifying parameter space/Times to plot.Rda")
-
+##########ALL BELOW IS GOING TO BE REWRITTEN INTO MORE SUITABLE FORMAT######################################
 ############################################################################################################
-timestampdata<-data%>%group_by(x,y)%>%do(data.frame(time=timestest,
-                                                  infected=sapply(timestest,function(x) sum(.$time<= x))))
-
+############################################################################################################
+############################################################################################################
+############################################################################################################
+############################################################################################################
 ################using colour brewer#########################################################################
 
 myPalette <- colorRampPalette(brewer.pal(11, "Spectral"))
