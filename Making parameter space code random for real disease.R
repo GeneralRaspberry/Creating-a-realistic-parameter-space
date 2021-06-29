@@ -110,7 +110,7 @@ sim_par <- function(i=NULL){
   radiusCluster<-100
   lambdaParent<-.02
   lambdaDaughter<-30
-  randmod<-0
+  randmod<-1
   
   
   numbparents<-rpois(1,lambdaParent*dim)
@@ -278,7 +278,7 @@ temptimemax<-temptimemax[,"time"]
 pred_data <- data.frame(time=times, infected=logis(r=mean_r, t=times, K=1000, q0=1))
 ggplot(temp) + geom_line(aes(x=time, y=infected/hosts, group=sim), size=.2,colour="gray70") +
   geom_line(data=filter(pred_data, infected<1000), aes(x=time, y=infected/hosts), colour="red", size=1)+
-  ggtitle("Epidemic growth curve for 1000 simulations")+theme_tufte()+xlim(0,150) +
+  ggtitle("Epidemic growth curve for 1000 simulations")+theme_tufte()+xlim(0,max(times)) +
   annotate(geom="text",label=sprintf("%d days until .25 prevalence", days),x=100,y=.1) + 
   annotate(parse=T, geom="text",label=beta_an, x = 100, y = .2) +
   annotate(parse=T, geom="text", label=theta_an, x= 100, y = .3) +
@@ -287,7 +287,7 @@ ggplot(temp) + geom_line(aes(x=time, y=infected/hosts, group=sim), size=.2,colou
 
 ggprev<-ggplot(temp) + geom_line(aes(x=time, y=infected/hosts, group=sim), size=.2,colour="gray70") +
   geom_line(data=filter(pred_data, infected<1000), aes(x=time, y=infected/hosts), colour="red", size=1)+
-  ggtitle("Epidemic growth curve for 1000 simulations")+theme_tufte()+xlim(0,150) +
+  ggtitle("Epidemic growth curve for 1000 simulations")+theme_tufte()+xlim(0,max(times)) +
   annotate(geom="text",label=sprintf("%d days until .25 prevalence", days),x=100,y=.1) + 
   annotate(parse=T, geom="text",label=beta_an, x = 100, y = .2) +
   annotate(parse=T, geom="text", label=theta_an, x= 100, y = .3) +
