@@ -90,8 +90,8 @@ dim <- 1000 # dimension of the landscape
 ## epidemic parameters
 sigma <- 0 #this is the assymptomatic period, doesn't change yet
 
-beta <- 25 ##The data I sent you, which is called data in R is the 1000 realisations of these parameters
-theta <- 50
+beta <- 100 ##The data I sent you, which is called data in R is the 1000 realisations of these parameters
+theta <- 80
 b <- 1
 area.host<-1
 
