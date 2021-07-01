@@ -84,8 +84,8 @@ tauLeapG <- function(beta, # transmission rate
 ## meta parameters
 delta.t <- 10 # time step (ALEX-THIS IS BIGGER THAN THE EXPERIMENT BELOW BECAUSE IT IS TAKING SO MUCH LONGER!)
 iterations <- 1000 # how many epidemic to simulate
-hosts <- 10000 # number of hosts
-dim <- 1000 # dimension of the landscape
+hosts <- 1000 # number of hosts
+dim <- 100 # dimension of the landscape
 
 ## epidemic parameters
 sigma <- 0 #this is the assymptomatic period, doesn't change yet
@@ -107,9 +107,9 @@ sim_par <- function(i=NULL){
 
   set.seed(seed=NULL)
   
-  radiusCluster<-100
-  lambdaParent<-.02
-  lambdaDaughter<-30
+  radiusCluster<-10
+  lambdaParent<-.2
+  lambdaDaughter<-20
   randmod<-1
   
   
@@ -172,6 +172,7 @@ sim_par <- function(i=NULL){
   print(length(landscape$marks))
   
   data <- data.frame(x=landscape$x, y=landscape$y, id=1:hosts)
+  ggplot(data,aes(x=x,y=y))+geom_point()
 ## design a function that will be called
   
   
