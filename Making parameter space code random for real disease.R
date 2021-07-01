@@ -82,15 +82,15 @@ tauLeapG <- function(beta, # transmission rate
 
 
 ## meta parameters
-delta.t <- 50 # time step (ALEX-THIS IS BIGGER THAN THE EXPERIMENT BELOW BECAUSE IT IS TAKING SO MUCH LONGER!)
+delta.t <- 10 # time step (ALEX-THIS IS BIGGER THAN THE EXPERIMENT BELOW BECAUSE IT IS TAKING SO MUCH LONGER!)
 iterations <- 1000 # how many epidemic to simulate
-hosts <- 1000 # number of hosts
+hosts <- 10000 # number of hosts
 dim <- 1000 # dimension of the landscape
 
 ## epidemic parameters
 sigma <- 0 #this is the assymptomatic period, doesn't change yet
 
-beta <- 100 ##The data I sent you, which is called data in R is the 1000 realisations of these parameters
+beta <- 50 ##The data I sent you, which is called data in R is the 1000 realisations of these parameters
 theta <- 80
 b <- 1
 area.host<-1
@@ -247,7 +247,7 @@ eval <- function(r, df){
 # sapply(unique(temp$sim), 
 #               function(i) optimize(f = eval, interval = c(0, 0.5), df=filter(temp, sim==i))$minimum)
 r <- sapply(unique(temp), 
-             function(i) optimize(f = eval, interval = c(0, 1), df=filter(temp, sim==i))$minimum)
+             function(i) optimize(f = eval, interval = c(0, .5), df=filter(temp, sim==i))$minimum)
 }
 #another cluster
 cl <- makeCluster(mc <- getOption("cl.cores", 3))
