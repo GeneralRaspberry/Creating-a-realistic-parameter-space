@@ -10,7 +10,7 @@ hosts <- 888 # number of hosts
 dim <- 100 # dimension of the landscape
 
 radiusCluster<-1
-lambdaParent<-.2
+lambdaParent<-1
 lambdaDaughter<-30
 randmod<-0
 
