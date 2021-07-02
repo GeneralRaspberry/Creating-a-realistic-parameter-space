@@ -9,9 +9,9 @@ library("ggthemes")
 hosts <- 888 # number of hosts
 dim <- 100 # dimension of the landscape
 
-radiusCluster<-1
+radiusCluster<-5
 lambdaParent<-1
-lambdaDaughter<-30
+lambdaDaughter<-20
 randmod<-0
 
 ##################################landscape generation#####################################################
