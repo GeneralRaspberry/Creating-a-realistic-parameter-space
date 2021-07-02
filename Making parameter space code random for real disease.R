@@ -82,16 +82,16 @@ tauLeapG <- function(beta, # transmission rate
 
 
 ## meta parameters
-delta.t <- 10 # time step (ALEX-THIS IS BIGGER THAN THE EXPERIMENT BELOW BECAUSE IT IS TAKING SO MUCH LONGER!)
+delta.t <- 15 # time step (ALEX-THIS IS BIGGER THAN THE EXPERIMENT BELOW BECAUSE IT IS TAKING SO MUCH LONGER!)
 iterations <- 1000 # how many epidemic to simulate
-hosts <- 1000 # number of hosts
+hosts <- 888 # number of hosts
 dim <- 100 # dimension of the landscape
 
 ## epidemic parameters
 sigma <- 0 #this is the assymptomatic period, doesn't change yet
 
-beta <- 50 ##The data I sent you, which is called data in R is the 1000 realisations of these parameters
-theta <- 80
+beta <- 1 ##The data I sent you, which is called data in R is the 1000 realisations of these parameters
+theta <- 86
 b <- 1
 area.host<-1
 
@@ -107,8 +107,8 @@ sim_par <- function(i=NULL){
 
   set.seed(seed=NULL)
   
-  radiusCluster<-10
-  lambdaParent<-.2
+  radiusCluster<-5
+  lambdaParent<-1
   lambdaDaughter<-20
   randmod<-1
   
@@ -172,7 +172,7 @@ sim_par <- function(i=NULL){
   print(length(landscape$marks))
   
   data <- data.frame(x=landscape$x, y=landscape$y, id=1:hosts)
-  ggplot(data,aes(x=x,y=y))+geom_point()
+
 ## design a function that will be called
   
   
@@ -248,7 +248,7 @@ eval <- function(r, df){
 # sapply(unique(temp$sim), 
 #               function(i) optimize(f = eval, interval = c(0, 0.5), df=filter(temp, sim==i))$minimum)
 r <- sapply(unique(temp), 
-             function(i) optimize(f = eval, interval = c(0, .5), df=filter(temp, sim==i))$minimum)
+             function(i) optimize(f = eval, interval = c(0, .1), df=filter(temp, sim==i))$minimum)
 }
 #another cluster
 cl <- makeCluster(mc <- getOption("cl.cores", 3))
@@ -256,31 +256,19 @@ clusterCall(cl,function() library("dplyr"))
 clusterExport(cl=cl, varlist=c("temp","logis"),envir = environment())
 par_r<-parLapply(1,fun=r_calculate,cl=cl)
 stopCluster(cl)
-####################################adding the timer from the parameter code script##########################
+####################################getting mean r #########################################################
 
 mean_r<-mean(unlist(par_r))
-
-daycal<-function(e,year){
-  x<-log(333)/e
-  if (year==TRUE){
-  y<-round((x/365),2)
-  } else {
-    round(x,0)
-  }
-}
-
-days<-daycal(mean_r,year=FALSE)
 
 ############################################################################################################
 beta_an<-paste("beta ==", beta)
 theta_an<-paste("theta ==", theta)
 temptimemax<-temp%>%filter(infected<999)%>%filter(time==max(time))
 temptimemax<-temptimemax[,"time"]
-pred_data <- data.frame(time=times, infected=logis(r=mean_r, t=times, K=1000, q0=1))
+pred_data <- data.frame(time=times, infected=logis(r=mean_r, t=times, K=hosts, q0=1))
 ggplot(data_log) + geom_line(aes(x=time, y=infected/hosts, group=sim), size=.2,colour="gray70") +
   geom_line(data=filter(pred_data, infected<1000), aes(x=time, y=infected/hosts), colour="red", size=1)+
   ggtitle("Epidemic growth curve for 1000 simulations")+theme_tufte()+xlim(0,max(times)) +
-  annotate(geom="text",label=sprintf("%d days until .25 prevalence", days),x=100,y=.1) + 
   annotate(parse=T, geom="text",label=beta_an, x = 100, y = .2) +
   annotate(parse=T, geom="text", label=theta_an, x= 100, y = .3) +
   ylab("Prevalence") +
@@ -289,7 +277,6 @@ ggplot(data_log) + geom_line(aes(x=time, y=infected/hosts, group=sim), size=.2,c
 ggprev<-ggplot(data_log) + geom_line(aes(x=time, y=infected/hosts, group=sim), size=.2,colour="gray70") +
   geom_line(data=filter(pred_data, infected<1000), aes(x=time, y=infected/hosts), colour="red", size=1)+
   ggtitle("Epidemic growth curve for 1000 simulations")+theme_tufte()+xlim(0,max(times)) +
-  annotate(geom="text",label=sprintf("%d days until .25 prevalence", days),x=100,y=.1) + 
   annotate(parse=T, geom="text",label=beta_an, x = 100, y = .2) +
   annotate(parse=T, geom="text", label=theta_an, x= 100, y = .3) +
   ylab("Prevalence") +
