@@ -82,18 +82,20 @@ tauLeapG <- function(beta, # transmission rate
 
 
 ## meta parameters
-delta.t <- 15 # time step (ALEX-THIS IS BIGGER THAN THE EXPERIMENT BELOW BECAUSE IT IS TAKING SO MUCH LONGER!)
+delta.t <- 200 # time step (ALEX-THIS IS BIGGER THAN THE EXPERIMENT BELOW BECAUSE IT IS TAKING SO MUCH LONGER!)
 iterations <- 1000 # how many epidemic to simulate
-hosts <- 888 # number of hosts
+hosts <- 1000 # number of hosts
 dim <- 100 # dimension of the landscape
 
 ## epidemic parameters
 sigma <- 0 #this is the assymptomatic period, doesn't change yet
 
-beta <- 1 ##The data I sent you, which is called data in R is the 1000 realisations of these parameters
-theta <- 86
+beta <- .002 ##The data I sent you, which is called data in R is the 1000 realisations of these parameters
+theta <- 5
 b <- 1
 area.host<-1
+infbegin<-1
+  randmod<-1
 
 ##################################add a timer##############################################################
 
@@ -110,7 +112,6 @@ sim_par <- function(i=NULL){
   radiusCluster<-5
   lambdaParent<-1
   lambdaDaughter<-20
-  randmod<-1
   
   
   numbparents<-rpois(1,lambdaParent*dim)
@@ -177,7 +178,7 @@ sim_par <- function(i=NULL){
   
   
   set.seed(seed=NULL)
-  marks(landscape)<- sample(c(TRUE, rep(FALSE, hosts-1)))
+  marks(landscape)<- sample(c(rep(TRUE,infbegin), rep(FALSE, hosts-infbegin)))
   
   output <- tauLeapG(beta = beta, theta = theta, b = b,
                      sigma = sigma, delta.t = delta.t,
@@ -248,7 +249,7 @@ eval <- function(r, df){
 # sapply(unique(temp$sim), 
 #               function(i) optimize(f = eval, interval = c(0, 0.5), df=filter(temp, sim==i))$minimum)
 r <- sapply(unique(temp), 
-             function(i) optimize(f = eval, interval = c(0, .1), df=filter(temp, sim==i))$minimum)
+             function(i) optimize(f = eval, interval = c(0, .01), df=filter(temp, sim==i))$minimum)
 }
 #another cluster
 cl <- makeCluster(mc <- getOption("cl.cores", 3))
@@ -263,6 +264,7 @@ mean_r<-mean(unlist(par_r))
 ############################################################################################################
 beta_an<-paste("beta ==", beta)
 theta_an<-paste("theta ==", theta)
+r_an<-paste("r ==", round(mean_r,4))
 temptimemax<-temp%>%filter(infected<999)%>%filter(time==max(time))
 temptimemax<-temptimemax[,"time"]
 pred_data <- data.frame(time=times, infected=logis(r=mean_r, t=times, K=hosts, q0=1))
@@ -271,6 +273,7 @@ ggplot(data_log) + geom_line(aes(x=time, y=infected/hosts, group=sim), size=.2,c
   ggtitle("Epidemic growth curve for 1000 simulations")+theme_tufte()+xlim(0,max(times)) +
   annotate(parse=T, geom="text",label=beta_an, x = 100, y = .2) +
   annotate(parse=T, geom="text", label=theta_an, x= 100, y = .3) +
+  annotate(parse=T, geom= "text", label=r_an, x = 100, y = .1)
   ylab("Prevalence") +
   xlab("Time") 
 
@@ -279,24 +282,28 @@ ggprev<-ggplot(data_log) + geom_line(aes(x=time, y=infected/hosts, group=sim), s
   ggtitle("Epidemic growth curve for 1000 simulations")+theme_tufte()+xlim(0,max(times)) +
   annotate(parse=T, geom="text",label=beta_an, x = 100, y = .2) +
   annotate(parse=T, geom="text", label=theta_an, x= 100, y = .3) +
+  annotate(parse=T, geom= "text", label=r_an, x = 100, y = .1)
   ylab("Prevalence") +
   xlab("Time") 
 proc.end2<-proc.time()-t2
 proc.end2
 beep()
 ################################saving the data if it looks good!###########################################
-prevfile<-paste0("ggprev",beta,"theta",theta,"delta.t",delta.t,"rf",randmod,".png")
+prevfile<-paste0("ggprev beta",beta,"theta",theta,"delta.t",delta.t,"rf",randmod,".png")
 ggsave(file=prevfile,ggprev)
+diseasename<-"sudden oak"
 wdspec1<-"C:/Users/owner/Documents/Uni stuff/PhD/R scripts/Chapter 1/Script for identifying parameter space/Raw Data/"
-datanamefile<-paste0(wdspec1,"Theta", theta, " Beta", beta, " Rf", randmod, " Delta t", delta.t,".Rda")
+datanamefile<-paste0(wdspec1,diseasename,"Theta", theta, " Beta", beta, " Rf", randmod, " Delta t", delta.t,"growth rate", mean_r, ".Rda")
 save(data,file=datanamefile)
   
 length(unique(unlist(par_r)))
 mean_r
 wdspec<-"C:/Users/owner/Documents/Uni stuff/PhD/R scripts/Chapter 1/Script for identifying parameter space/Raw Data/Growth rate table corresponding to raw data/"
-parameter_table<-data.frame("Growth Rate"=mean_r, "Mean Dispersal Distance"= theta*2, "\u03b2" = beta, "Plant Distribution" = randmod, "\u03C4 leap"=delta.t)
-parametertablenamefile<-paste0(wdspec, "Growth Rate ",mean_r, "Mean Dispersal Distance ", theta*2,"\u03b2 ",beta, "Plant Distribution " , randmod, "\u03C4-leap ", delta.t, ".Rda")
+parameter_table<-data.frame("Disease"=diseasename, "Growth Rate"=mean_r, "Mean Dispersal Distance"= theta*2, "\u03b2" = beta, "Plant Distribution" = randmod, "\u03C4 leap"=delta.t)
+parametertablenamefile<-paste0(wdspec, diseasename,"Growth Rate ",mean_r, "Mean Dispersal Distance ", theta*2,"\u03b2 ",beta, "Plant Distribution " , randmod, "\u03C4-leap ", delta.t, ".Rda")
 save(parameter_table,file=parametertablenamefile)
+
+
 
 ##########ALL BELOW IS GOING TO BE REWRITTEN INTO MORE SUITABLE FORMAT######################################
 ############################################################################################################
@@ -309,6 +316,7 @@ save(parameter_table,file=parametertablenamefile)
 myPalette <- colorRampPalette(brewer.pal(11, "Spectral"))
 
 ##################################plotting the simulation count per point#################################
+
 
 ggtimestampplot<-ggplot(timestampdata)+geom_point(aes(x=x,y=y,colour=infected))+facet_grid(vars(time))+
   ggtitle(paste0("Simulated infection count per tree \n \u03b2 = ", beta, " \u03b8 = ", theta))+theme_tufte()+
