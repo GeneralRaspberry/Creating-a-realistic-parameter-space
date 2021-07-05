@@ -318,13 +318,18 @@ myPalette <- colorRampPalette(brewer.pal(11, "Spectral"))
 ##################################plotting the simulation count per point#################################
 
 
-ggtimestampplot<-ggplot(timestampdata)+geom_point(aes(x=x,y=y,colour=infected))+facet_grid(vars(time))+
-  ggtitle(paste0("Simulated infection count per tree \n \u03b2 = ", beta, " \u03b8 = ", theta))+theme_tufte()+
-  scale_color_gradientn(colours = rev(myPalette(1000)))
 
-ggplot(timestampdata)+geom_point(aes(x=x,y=y,colour=infected))+facet_grid(vars(time))+
-  ggtitle(paste0("Simulated infection count per tree \n \u03b2 = ", beta, " \u03b8 = ", theta))+theme_tufte()+
-  scale_color_gradientn(colours = rev(myPalette(1000)))
+Rdmsim<- sample(1:length(unique(data$sim)),6,replace=FALSE)
+dataframeforplot<-data%>%filter(sim %in% Rdmsim)
+plot_sims_random<-function(data,time,sim){
+    ggplot(data)+geom_point(aes(x=x,y=y,colour=time))+facet_grid(vars(sim))+
+   # ggtitle(paste0("Time until infection \n \u03b2 = ", beta, " \u03b8 = ", theta, "Sim =", sim))+
+    theme_tufte()+
+    scale_color_gradientn(colours = rev(myPalette(1000)))
+}
+
+myplots<-lapply(colnames(dataframeforplot),plot_sims_random,data = dataframeforplot)
+
 
 timestampplotfile<-paste0("ggtimestampplotbeta",beta,"theta",theta,"delta.t",delta.t,"rf",randmod,".png")
 ggsave(file=timestampplotfile,ggtimestampplot, width = 10, height = 30, units = "cm")
