@@ -82,7 +82,7 @@ tauLeapG <- function(beta, # transmission rate
 
 
 ## meta parameters
-delta.t <- 200 # time step (ALEX-THIS IS BIGGER THAN THE EXPERIMENT BELOW BECAUSE IT IS TAKING SO MUCH LONGER!)
+delta.t <- 150 # time step (ALEX-THIS IS BIGGER THAN THE EXPERIMENT BELOW BECAUSE IT IS TAKING SO MUCH LONGER!)
 iterations <- 1000 # how many epidemic to simulate
 hosts <- 1000 # number of hosts
 dim <- 100 # dimension of the landscape
@@ -90,13 +90,14 @@ dim <- 100 # dimension of the landscape
 ## epidemic parameters
 sigma <- 0 #this is the assymptomatic period, doesn't change yet
 
-beta <- .002 ##The data I sent you, which is called data in R is the 1000 realisations of these parameters
-theta <- 5
+beta <- .025 ##The data I sent you, which is called data in R is the 1000 realisations of these parameters
+theta <- 86
 b <- 1
 area.host<-1
 infbegin<-1
-  randmod<-1
-diseasename<-"Sudden Oak Death"
+  randmod<-0
+diseasename<-"Ash dieback"
+years<-25
 
 ##################################add a timer##############################################################
 
@@ -250,7 +251,7 @@ eval <- function(r, df){
 # sapply(unique(temp$sim), 
 #               function(i) optimize(f = eval, interval = c(0, 0.5), df=filter(temp, sim==i))$minimum)
 r <- sapply(unique(temp), 
-             function(i) optimize(f = eval, interval = c(0, .01), df=filter(temp, sim==i))$minimum)
+             function(i) optimize(f = eval, interval = c(0, .05), df=filter(temp, sim==i))$minimum)
 }
 #another cluster
 cl <- makeCluster(mc <- getOption("cl.cores", 3))
@@ -272,7 +273,7 @@ temptimemax<-temptimemax[,"time"]
 pred_data <- data.frame(time=times, infected=logis(r=mean_r, t=times, K=hosts, q0=1))
 ggplot(data_log) + geom_line(aes(x=time, y=infected/hosts, group=sim), size=.2,colour="gray70") +
   geom_line(data=filter(pred_data, infected<1000), aes(x=time, y=infected/hosts), colour="red", size=1)+
-  ggtitle(paste0("Epidemic growth curve for 1000 simulations for ", diseasename))+theme_tufte()+xlim(0,max(times)) +
+  ggtitle(paste0("Epidemic growth curve for 1000 simulations for ", diseasename))+theme_tufte()+xlim(0,years*365) +
   annotate(parse=T, geom="text",label=beta_an, x = 100, y = .2) +
   annotate(parse=T, geom="text", label=theta_an, x= 100, y = .3) +
   annotate(parse=T, geom= "text", label=r_an, x = 100, y = .1)+
@@ -282,7 +283,7 @@ ggplot(data_log) + geom_line(aes(x=time, y=infected/hosts, group=sim), size=.2,c
 
 ggprev<-ggplot(data_log) + geom_line(aes(x=time, y=infected/hosts, group=sim), size=.2,colour="gray70") +
   geom_line(data=filter(pred_data, infected<1000), aes(x=time, y=infected/hosts), colour="red", size=1)+
-  ggtitle(paste0("Epidemic growth curve for 1000 simulations for ", diseasename))+theme_tufte()+xlim(0,max(times)) +
+  ggtitle(paste0("Epidemic growth curve for 1000 simulations for ", diseasename))+theme_tufte()+xlim(0,years*365) +
   annotate(parse=T, geom="text",label=beta_an, x = 100, y = .2) +
   annotate(parse=T, geom="text", label=theta_an, x= 100, y = .3) +
   annotate(parse=T, geom= "text", label=r_an, x = 100, y = .1)+
@@ -308,24 +309,17 @@ save(parameter_table,file=parametertablenamefile)
 
 
 
-##########ALL BELOW IS GOING TO BE REWRITTEN INTO MORE SUITABLE FORMAT######################################
-############################################################################################################
-############################################################################################################
-############################################################################################################
-############################################################################################################
-############################################################################################################
 ################using colour brewer#########################################################################
 
 myPalette <- colorRampPalette(brewer.pal(11, "Spectral"))
 
-##################################plotting the simulation count per point#################################
+##################################plotting the time until infected random sims#################################
 
 
 
 Rdmsim<- sample(1:length(unique(data$sim)),6,replace=FALSE)
 dataframeforplot<-data%>%filter(sim %in% Rdmsim)
 
-years<-25
 legend<-range(c(0,years*365))
 
  ggplot(dataframeforplot)+geom_point(aes(x=x,y=y,colour=time))+facet_grid(vars(sim))+
