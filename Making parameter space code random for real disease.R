@@ -96,6 +96,7 @@ b <- 1
 area.host<-1
 infbegin<-1
   randmod<-1
+diseasename<-"Sudden Oak Death"
 
 ##################################add a timer##############################################################
 
@@ -265,24 +266,27 @@ mean_r<-mean(unlist(par_r))
 beta_an<-paste("beta ==", beta)
 theta_an<-paste("theta ==", theta)
 r_an<-paste("r ==", round(mean_r,4))
+l_an<-paste("LRF ==", randmod)
 temptimemax<-temp%>%filter(infected<999)%>%filter(time==max(time))
 temptimemax<-temptimemax[,"time"]
 pred_data <- data.frame(time=times, infected=logis(r=mean_r, t=times, K=hosts, q0=1))
 ggplot(data_log) + geom_line(aes(x=time, y=infected/hosts, group=sim), size=.2,colour="gray70") +
   geom_line(data=filter(pred_data, infected<1000), aes(x=time, y=infected/hosts), colour="red", size=1)+
-  ggtitle("Epidemic growth curve for 1000 simulations")+theme_tufte()+xlim(0,max(times)) +
+  ggtitle(paste0("Epidemic growth curve for 1000 simulations for ", diseasename))+theme_tufte()+xlim(0,max(times)) +
   annotate(parse=T, geom="text",label=beta_an, x = 100, y = .2) +
   annotate(parse=T, geom="text", label=theta_an, x= 100, y = .3) +
-  annotate(parse=T, geom= "text", label=r_an, x = 100, y = .1)
+  annotate(parse=T, geom= "text", label=r_an, x = 100, y = .1)+
+  annotate(parse=T, geom= "text", label=l_an, x = 100, y = .4)+
   ylab("Prevalence") +
   xlab("Time") 
 
 ggprev<-ggplot(data_log) + geom_line(aes(x=time, y=infected/hosts, group=sim), size=.2,colour="gray70") +
   geom_line(data=filter(pred_data, infected<1000), aes(x=time, y=infected/hosts), colour="red", size=1)+
-  ggtitle("Epidemic growth curve for 1000 simulations")+theme_tufte()+xlim(0,max(times)) +
+  ggtitle(paste0("Epidemic growth curve for 1000 simulations for ", diseasename))+theme_tufte()+xlim(0,max(times)) +
   annotate(parse=T, geom="text",label=beta_an, x = 100, y = .2) +
   annotate(parse=T, geom="text", label=theta_an, x= 100, y = .3) +
-  annotate(parse=T, geom= "text", label=r_an, x = 100, y = .1)
+  annotate(parse=T, geom= "text", label=r_an, x = 100, y = .1)+
+  annotate(parse=T, geom= "text", label=l_an, x = 100, y = .4)+
   ylab("Prevalence") +
   xlab("Time") 
 proc.end2<-proc.time()-t2
@@ -291,7 +295,6 @@ beep()
 ################################saving the data if it looks good!###########################################
 prevfile<-paste0("ggprev beta",beta,"theta",theta,"delta.t",delta.t,"rf",randmod,".png")
 ggsave(file=prevfile,ggprev)
-diseasename<-"Sudden Oak Death"
 wdspec1<-"C:/Users/owner/Documents/Uni stuff/PhD/R scripts/Chapter 1/Script for identifying parameter space/Raw Data/"
 datanamefile<-paste0(wdspec1,diseasename,"Theta", theta, " Beta", beta, " Rf", randmod, " Delta t", delta.t,"growth rate", mean_r, ".Rda")
 save(data,file=datanamefile)
@@ -300,7 +303,7 @@ length(unique(unlist(par_r)))
 mean_r
 wdspec<-"C:/Users/owner/Documents/Uni stuff/PhD/R scripts/Chapter 1/Script for identifying parameter space/Raw Data/Growth rate table corresponding to raw data/"
 parameter_table<-data.frame("Disease"=diseasename, "Growth Rate"=mean_r, "Mean Dispersal Distance"= theta*2, "\u03b2" = beta, "Plant Distribution" = randmod, "\u03C4 leap"=delta.t)
-parametertablenamefile<-paste0(wdspec, diseasename,"Growth Rate ",mean_r, "Mean Dispersal Distance ", theta*2,"\u03b2 ",beta, "Plant Distribution " , randmod, "\u03C4-leap ", delta.t, ".Rda")
+parametertablenamefile<-paste0(diseasename,"Growth Rate ",round(mean_r,5), "Mean Dispersal Distance ", theta*2,"\u03b2 ",beta, "Plant Distribution " , randmod, "t-leap ", delta.t, ".Rda")
 save(parameter_table,file=parametertablenamefile)
 
 
@@ -323,7 +326,7 @@ Rdmsim<- sample(1:length(unique(data$sim)),6,replace=FALSE)
 dataframeforplot<-data%>%filter(sim %in% Rdmsim)
 
  ggplot(dataframeforplot)+geom_point(aes(x=x,y=y,colour=time))+facet_grid(vars(sim))+
- ggtitle(paste0("Time until infection \n \u03b2 = ", beta, " \u03b8 = ", theta," ",diseasename))+
+ ggtitle(paste0("Time until infection for ",diseasename,"\n \u03b2 = ", beta, " \u03b8 = ", theta, "LRF = ", randmod, "r = ", mean_r))+
  theme_tufte()+
  scale_color_gradientn(colours = rev(myPalette(1000)))
  
