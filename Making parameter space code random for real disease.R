@@ -95,7 +95,7 @@ theta <- 5
 b <- 1
 area.host<-1
 infbegin<-1
-  randmod<-1
+  randmod<-0
 diseasename<-"Sudden Oak Death"
 
 ##################################add a timer##############################################################
@@ -293,7 +293,7 @@ proc.end2<-proc.time()-t2
 proc.end2
 beep()
 ################################saving the data if it looks good!###########################################
-prevfile<-paste0("ggprev beta",beta,"theta",theta,"delta.t",delta.t,"rf",randmod,".png")
+prevfile<-paste0(diseasename,"ggprev beta",beta,"theta",theta,"delta.t",delta.t,"rf",randmod,".png")
 ggsave(file=prevfile,ggprev)
 wdspec1<-"C:/Users/owner/Documents/Uni stuff/PhD/R scripts/Chapter 1/Script for identifying parameter space/Raw Data/"
 datanamefile<-paste0(wdspec1,diseasename,"Theta", theta, " Beta", beta, " Rf", randmod, " Delta t", delta.t,"growth rate", mean_r, ".Rda")
@@ -303,7 +303,7 @@ length(unique(unlist(par_r)))
 mean_r
 wdspec<-"C:/Users/owner/Documents/Uni stuff/PhD/R scripts/Chapter 1/Script for identifying parameter space/Raw Data/Growth rate table corresponding to raw data/"
 parameter_table<-data.frame("Disease"=diseasename, "Growth Rate"=mean_r, "Mean Dispersal Distance"= theta*2, "\u03b2" = beta, "Plant Distribution" = randmod, "\u03C4 leap"=delta.t)
-parametertablenamefile<-paste0(diseasename,"Growth Rate ",round(mean_r,5), "Mean Dispersal Distance ", theta*2,"\u03b2 ",beta, "Plant Distribution " , randmod, "t-leap ", delta.t, ".Rda")
+parametertablenamefile<-paste0(wdspec,diseasename,"Growth Rate ",round(mean_r,5), "Mean Dispersal Distance ", theta*2,"\u03b2 ",beta, "Plant Distribution " , randmod, "t-leap ", delta.t, ".Rda")
 save(parameter_table,file=parametertablenamefile)
 
 
@@ -326,14 +326,14 @@ Rdmsim<- sample(1:length(unique(data$sim)),6,replace=FALSE)
 dataframeforplot<-data%>%filter(sim %in% Rdmsim)
 
  ggplot(dataframeforplot)+geom_point(aes(x=x,y=y,colour=time))+facet_grid(vars(sim))+
- ggtitle(paste0("Time until infection for ",diseasename,"\n \u03b2 = ", beta, " \u03b8 = ", theta, "LRF = ", randmod, "r = ", mean_r))+
+ ggtitle(paste0("Time until infection for ",diseasename,"\n \u03b2 = ", beta, " \u03b8 = ", theta, " LRF = ", randmod, " r = ", round(mean_r,4)))+
  theme_tufte()+
- scale_color_gradientn(colours = rev(myPalette(1000)))
+ scale_color_gradientn(colours = (myPalette(1000)))
  
  ggplot6randomsim<-ggplot(dataframeforplot)+geom_point(aes(x=x,y=y,colour=time))+facet_grid(vars(sim))+
-   ggtitle(paste0("Time until infection \n \u03b2 = ", beta, " \u03b8 = ", theta," ",diseasename))+
+   ggtitle(paste0("Time until infection for ",diseasename,"\n \u03b2 = ", beta, " \u03b8 = ", theta, " LRF = ", randmod, " r = ", round(mean_r,4)))+
    theme_tufte()+
-   scale_color_gradientn(colours = rev(myPalette(1000)))
+   scale_color_gradientn(colours = (myPalette(1000)))
 
 
 simstampplotfile<-paste0(diseasename,"ggsimstampplotbeta",beta,"theta",theta,"delta.t",delta.t,"rf",randmod,".png")
