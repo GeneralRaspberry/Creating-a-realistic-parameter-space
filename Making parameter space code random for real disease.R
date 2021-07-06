@@ -291,7 +291,7 @@ beep()
 ################################saving the data if it looks good!###########################################
 prevfile<-paste0("ggprev beta",beta,"theta",theta,"delta.t",delta.t,"rf",randmod,".png")
 ggsave(file=prevfile,ggprev)
-diseasename<-"sudden oak"
+diseasename<-"Sudden Oak Death"
 wdspec1<-"C:/Users/owner/Documents/Uni stuff/PhD/R scripts/Chapter 1/Script for identifying parameter space/Raw Data/"
 datanamefile<-paste0(wdspec1,diseasename,"Theta", theta, " Beta", beta, " Rf", randmod, " Delta t", delta.t,"growth rate", mean_r, ".Rda")
 save(data,file=datanamefile)
@@ -321,15 +321,17 @@ myPalette <- colorRampPalette(brewer.pal(11, "Spectral"))
 
 Rdmsim<- sample(1:length(unique(data$sim)),6,replace=FALSE)
 dataframeforplot<-data%>%filter(sim %in% Rdmsim)
-plot_sims_random<-function(data,time,sim){
-    ggplot(data)+geom_point(aes(x=x,y=y,colour=time))+facet_grid(vars(sim))+
-   # ggtitle(paste0("Time until infection \n \u03b2 = ", beta, " \u03b8 = ", theta, "Sim =", sim))+
-    theme_tufte()+
-    scale_color_gradientn(colours = rev(myPalette(1000)))
-}
 
-myplots<-lapply(colnames(dataframeforplot),plot_sims_random,data = dataframeforplot)
+ ggplot(dataframeforplot)+geom_point(aes(x=x,y=y,colour=time))+facet_grid(vars(sim))+
+ ggtitle(paste0("Time until infection \n \u03b2 = ", beta, " \u03b8 = ", theta," ",diseasename))+
+ theme_tufte()+
+ scale_color_gradientn(colours = rev(myPalette(1000)))
+ 
+ ggplot6randomsim<-ggplot(dataframeforplot)+geom_point(aes(x=x,y=y,colour=time))+facet_grid(vars(sim))+
+   ggtitle(paste0("Time until infection \n \u03b2 = ", beta, " \u03b8 = ", theta," ",diseasename))+
+   theme_tufte()+
+   scale_color_gradientn(colours = rev(myPalette(1000)))
 
 
-timestampplotfile<-paste0("ggtimestampplotbeta",beta,"theta",theta,"delta.t",delta.t,"rf",randmod,".png")
-ggsave(file=timestampplotfile,ggtimestampplot, width = 10, height = 30, units = "cm")
+simstampplotfile<-paste0(diseasename,"ggsimstampplotbeta",beta,"theta",theta,"delta.t",delta.t,"rf",randmod,".png")
+ggsave(file=simstampplotfile,ggplot6randomsim, width = 10, height = 30, units = "cm")
