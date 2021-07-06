@@ -95,7 +95,7 @@ theta <- 5
 b <- 1
 area.host<-1
 infbegin<-1
-  randmod<-0
+  randmod<-1
 diseasename<-"Sudden Oak Death"
 
 ##################################add a timer##############################################################
@@ -325,15 +325,20 @@ myPalette <- colorRampPalette(brewer.pal(11, "Spectral"))
 Rdmsim<- sample(1:length(unique(data$sim)),6,replace=FALSE)
 dataframeforplot<-data%>%filter(sim %in% Rdmsim)
 
+years<-25
+legend<-range(c(0,years*365))
+
  ggplot(dataframeforplot)+geom_point(aes(x=x,y=y,colour=time))+facet_grid(vars(sim))+
  ggtitle(paste0("Time until infection for ",diseasename,"\n \u03b2 = ", beta, " \u03b8 = ", theta, " LRF = ", randmod, " r = ", round(mean_r,4)))+
  theme_tufte()+
- scale_color_gradientn(colours = (myPalette(1000)))
+ scale_color_gradientn(colours = (myPalette(1000)),
+                       limits = c(legend[1],legend[2]))
  
  ggplot6randomsim<-ggplot(dataframeforplot)+geom_point(aes(x=x,y=y,colour=time))+facet_grid(vars(sim))+
    ggtitle(paste0("Time until infection for ",diseasename,"\n \u03b2 = ", beta, " \u03b8 = ", theta, " LRF = ", randmod, " r = ", round(mean_r,4)))+
    theme_tufte()+
-   scale_color_gradientn(colours = (myPalette(1000)))
+   scale_color_gradientn(colours = (myPalette(1000)),
+                         limits = c(legend[1],legend[2]))
 
 
 simstampplotfile<-paste0(diseasename,"ggsimstampplotbeta",beta,"theta",theta,"delta.t",delta.t,"rf",randmod,".png")
